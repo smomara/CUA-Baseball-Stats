@@ -1,0 +1,86 @@
+<html lang = "en">
+<head>
+<title>Sean O'Mara</title>
+<meta charset = "utf-8">
+</head>
+<body>
+<header>
+<h1>Sean O'Mara</h1>
+<nav>
+<ul>
+	<li><a href="./">Home</a></li>
+	<li><a href="./blog/">Blog</a></li>
+</ul>
+</nav>
+</header>
+
+<main>
+	<h2>1235. Maximum Profit in Job Scheduling</h2>
+	<p>November 26, 2022 - Daily Leetcode</p>
+
+	<p><a href=">https://leetcode.com/problems/maximum-profit-in-job-scheduling/">Leetcode link</a></p>
+
+	<h3>Description</h3>
+	<p>We have <code>n</code> jobs, where every job is scheduled to be done from <code>startTime[i]</code> to <code>endTime[i]</code>, obtaining a profit of <code>profit[i]</code>.</p>
+	<p>You're given the <code>startTime</code>, <code>endTime</code> and <code>profit</code> arrays, return the maximum profit you can take such that there are no two jobs in the subset with overlapping time range.</p>
+	<p>If you choose a job that ends at time <code>X</code> you will be able to start another job that starts at time <code>X</code>.</p>
+	
+	<h3>Example</h3>
+	<p><img src="https://assets.leetcode.com/uploads/2019/10/10/sample1_1584.png"></p>
+	<pre><code><b>Input:</b> startTime = [1,2,3,3], endTime = [3,4,5,6], profit = [50,10,40,70]
+<b>Output:</b> 120
+<b>Explanation:</b> The subset chosen is the first and fourth job. 
+Time range [1-3]+[3-6] , we get profit of 120 = 50 + 70.</code></pre>
+
+	<h3>Approach</h3>
+	<p>After analyzing the image provided in the example, I realized that there exist two options once we encounter a job: to do the job or not do the job. If we do the job, then we examine future jobs with start times greater than the current job's end time. If we do not take the job, then we move on to the next job by start time. Essentially, we must write a program that will determine which option - do the job or not do the job - will yield the highest profit.</p>
+	<p>Since we must go down two separate paths in order to compare the yields of the two options, I decided to take a recursive approach.<p>
+
+	<h3>My Solution</h3>
+	<pre><code>from functools import lru_cache
+
+class Solution(object):
+    def jobScheduling(self, startTime, endTime, profit):
+        jobs = sorted(zip(startTime, endTime, profit))
+        startTime.sort()
+        
+        N = len(jobs)
+        START_TIME, END_TIME, PROFIT = 0, 1, 2
+        
+        @lru_cache(None)
+        def rec(currJobIdx):
+            
+            if currJobIdx == N: return 0
+            
+            nextJobIdx = bisect_left(startTime, jobs[currJobIdx][END_TIME])
+            
+            return max(jobs[currJobIdx][PROFIT] + rec(nextJobIdx), rec(currJobIdx+1))
+        
+        return rec(0)</pre></code>
+	
+	<h3>Explanation</h3>
+	<p>First, I created <code>jobs</code>: a list of tuples containing all the info about the jobs (sorted by start time). I also sorted <code>startTime</code> so that we can easily use binary search on it later on in the program.</p>
+	<pre><code>jobs = sorted(zip(startTime, endTime, profit))
+startTime.sort()</pre></code>
+	<p>Then I established some constant variables for general organization.</p>
+	<pre><code>N = len(jobs)
+START_TIME, END_TIME, PROFIT = 0, 1, 2</pre></code>
+	<p>Now, we are ready to create the recursive function. The function will take in an index of a job from the <code>jobs</code> list and determine which option yields the most profit: doing the job or not doing the job.</p>
+	<p>I used the lru_cache higher order function to enable memoization and reduce the execution time by ensuring no calculations are made more than once.</p>
+	<pre><code>@lru_cache(None)
+def rec(currJobIdx):</pre></code>
+	<p>The only base case will be when the current job index is equal to the number of jobs, meaning no jobs remain and our job is done.</p>
+	<pre><code>	if currJobIdx == N: return 0</pre></code>
+	<p>As mentioned previously, I sorted <code>startTime</code> so that we can use binary search on it; Now is the time to do so. I decided to use binary search O(log n) because it is faster than iterating through the list O(n). I used <code>bisect_left</code> to find the index of the next job with a start time after the current job with a binary search.</p>
+	<pre><code>	nextJobIdx = bisect_left(startTime, jobs[currJobIdx][END_TIME])</pre></code>
+	<p>Now we return the path which yields the highest profit. If we do the job, the total profit equals the profit of the current job plus whatever is returned when we call the function on <code>nextJobIdx</code>. If we do not do the job, the total profit equals whatever is returned when we call the function on the next job in <code>jobs</code>.</p>
+	<pre><code>	return max(jobs[currJobIdx][PROFIT] + rec(nextJobIdx), rec(currJobIdx+1))</pre></code>
+	<p>We completed the recursive function. Now, all there is to do is call it on the index <code>0</code>.</p>
+	<pre><code>return rec(0)</pre></code>
+
+	<h3>Reflection</h3>
+	<p>A fun little recursive program. The leetcode website actually suggests a dynamic programming approach, but my solution completed faster than 95% of the solutions on the site. Maybe next time I encounter a problem like this I will try dynamic programming since I struggle understanding it and would like to improve</p>
+
+</main>
+<body>
+<html>
