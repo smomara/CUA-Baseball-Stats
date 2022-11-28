@@ -3,6 +3,7 @@
 <title>Sean O'Mara</title>
 <meta charset = "utf-8">
 </head>
+
 <body>
 <header>
 <h1>Sean O'Mara</h1>
@@ -15,29 +16,138 @@
 </header>
 
 <main>
-	<h2>1235. Maximum Profit in Job Scheduling</h2>
-	<p>November 26, 2022 - Daily Leetcode</p>
+	<div>
+		<h2>2225. Find Players With Zero or One Losses</h2>
+		<p>November 28, 2022 - Daily Leetcode</p>
+		<p><a href="https://leetcode.com/problems/find-players-with-zero-or-one-losses/">Leetcode link</a></p>
 
-	<p><a href=">https://leetcode.com/problems/maximum-profit-in-job-scheduling/">Leetcode link</a></p>
+		<h3>Description</h3>
+		<p>You are given an integer array <code>matches</code> where <code>matches[i] = [winner<sub>i</sub>, loser<sub>i</sub>]</code> indicates that the player <code>winner<sub>i</sub></code> defeated the player <code>loser<sub>i</sub></code> in a match.</p>
 
-	<h3>Description</h3>
-	<p>We have <code>n</code> jobs, where every job is scheduled to be done from <code>startTime[i]</code> to <code>endTime[i]</code>, obtaining a profit of <code>profit[i]</code>.</p>
-	<p>You're given the <code>startTime</code>, <code>endTime</code> and <code>profit</code> arrays, return the maximum profit you can take such that there are no two jobs in the subset with overlapping time range.</p>
-	<p>If you choose a job that ends at time <code>X</code> you will be able to start another job that starts at time <code>X</code>.</p>
+		<p>Return a <i>list <code>answer</code> of size <code>2</code> where:</i></p>
+
+		<ul>
+			<li><code>answer[0]</code> is a list of all players that have <b>not</b> lost any matches.</li>
+			<li><code>answer[1]</code> is a list of all players that have lost exactly <b>one</b> match.</li>
+		</ul>
+
+		<p>The values in the two lists should be returned in <b>increasing</b> order.</p>
+
+		<h2>Example</h2>
+		<pre><code><b>Input:</b> matches = [[1,3],[2,3],[3,6],[5,6],[5,7],[4,5],[4,8],[4,9],[10,4],[10,9]]
+<b>Output:</b> [[1,2,10],[4,5,7,8]]
+<b>Explanation:</b>
+Players 1, 2, and 10 have not lost any matches.
+Players 4, 5, 7, and 8 each have lost one match.
+Players 3, 6, and 9 each have lost two matches.
+Thus, answer[0] = [1,2,10] and answer[1] = [4,5,7,8].</code></pre>
 	
-	<h3>Example</h3>
-	<p><img src="https://assets.leetcode.com/uploads/2019/10/10/sample1_1584.png"></p>
-	<pre><code><b>Input:</b> startTime = [1,2,3,3], endTime = [3,4,5,6], profit = [50,10,40,70]
+		<h2>Approach</h2>
+		<p>The main task in this problem is to track each player's number of losses. To achieve this, I decided to maintain a hashmap of players and their losses. Then, we will traverse the hashmap to find each player with either <code>0</code> or <code>1</code> losses.</p>
+
+		<h2>My Solution</h2>
+		<pre><code>class Solution:
+    def findWinners(self, matches: List[List[int]]) -> List[List[int]]:
+        winners = []
+        losers = []
+        losses = {}
+        
+        for winner, loser in matches:
+            losses[winner] = losses.get(winner, 0)
+            losses[loser] = losses.get(loser, 0) + 1
+        
+        for k, v in losses.items():
+            if v == 0:
+                winners.append(k)
+            if v == 1:
+                losers.append(k)
+        
+        return [sorted(winners), sorted(losers)]</code></pre>
+
+	</div>
+
+	<div>
+		<h2>446. Arithmetic Slices II - Subsequence</h2>
+		<p>November 27, 2022 - Daily Leetcode</p>
+		<p><a href="https://leetcode.com/problems/arithmetic-slices-ii-subsequence/">Leetcode link</a></p>
+
+		<h3>Introduction</h3>
+		<p>Well, I got what asked for in yesterday's reflection: a dynamic programming problem. For somebody who often struggles wrapping their head around the concept, this problem serves as a harsh learning experience. Hopefully tackling it while explaining my thought process here will make solving future problems a little bit easier. Because this one was hard. Very hard.</p>
+
+		<h3>Description</h3>
+		<p>Given an integer array <code>nums</code>, return <i>the number of all the <b>arithmetic subsequences</b> of</i> <code>nums</code>.</p>
+		<p>A sequence of numbers is called arithmetic if it consists of <b>at least three elements</b> and if the difference between any two consecutive elements is the same.</p>
+		<ul>
+			<li>For example, <code>[1, 3, 5, 7, 9]</code>, <code>[7, 7, 7, 7]</code>, and <code>[3, -1, 5, -9]</code> are arithmetic sequences.</li>
+			<li>For example, <code>[1, 1, 2, 5, 7]</code> is not an arithmetic sequence.</li>
+		</ul>
+		<p>A <b>subsequence</b> of an array is a sequence that can be formed by removing some elements (possibly none) of the array.</p>
+		<ul>
+			<li>For example, <code>[2,5,10]</code> is a subsequence of <code>[1,2,1,2,4,1,5,10]</code>.</li>
+		</ul>
+		<p>The test cases are generated so that the answer fits in <b>32-bit</b> integer.</p>
+
+		<h3>Example</h3>
+		<pre><code><b>Input:</b> nums = [2,4,6,8,10]
+<b>Output:</b> 7
+<b>Explanation:</b> All arithmetic subsequence slices are:
+[2,4,6]
+[4,6,8]
+[6,8,10]
+[2,4,6,8]
+[4,6,8,10]
+[2,4,6,8,10]
+[2,6,10]</pre></code>
+
+		<h3>Approach</h3>
+		<p>Dynamic programming breaks complex problems like this one into simpler subproblems, so it is the best approach for today's daily problem.</p>
+		<p>To determine an arithmetic sequence, you need at least two parameters: the last element of the sequence, and the common difference. Therefore, we will create a list <code>dp</code> in which <code>dp[i][diff]</code> denotes the number of arithmetic sequences that ends with <code>nums[i]</code> and its common difference is <code>diff</code>.</p>
+
+		<h3>My Solution</h3>
+		<pre><code>class Solution:
+    def numberOfArithmeticSlices(self, nums: List[int]) -> int:
+        N = len(nums)
+        dp = [defaultdict(int) for _ in range(N)]
+        ret = 0
+        
+        for i in range(1, N):
+            for j in range(i):
+                
+                diff = nums[i] - nums[j]
+                count = 0
+                if diff in dp[j]:
+                    count = dp[j][diff]
+        
+                dp[i][diff] += count + 1
+                ret += count
+    
+        return ret</code></pre>
+
+	</div>
+	<div>
+		<h2>1235. Maximum Profit in Job Scheduling</h2>
+		<p>November 26, 2022 - Daily Leetcode</p>
+
+		<p><a href="https://leetcode.com/problems/maximum-profit-in-job-scheduling/">Leetcode link</a></p>
+
+		<h3>Description</h3>
+		<p>We have <code>n</code> jobs, where every job is scheduled to be done from <code>startTime[i]</code> to <code>endTime[i]</code>, obtaining a profit of <code>profit[i]</code>.</p>
+		<p>You're given the <code>startTime</code>, <code>endTime</code> and <code>profit</code> arrays, return the maximum profit you can take such that there are no two jobs in the subset with overlapping time range.</p>
+		<p>If you choose a job that ends at time <code>X</code> you will be able to start another job that starts at time <code>X</code>.</p>
+		
+		<h3>Example</h3>
+		<p><img src="https://assets.leetcode.com/uploads/2019/10/10/sample1_1584.png"></p>
+		<pre><code><b>Input:</b> startTime = [1,2,3,3], endTime = [3,4,5,6], profit = [50,10,40,70]
 <b>Output:</b> 120
 <b>Explanation:</b> The subset chosen is the first and fourth job. 
 Time range [1-3]+[3-6] , we get profit of 120 = 50 + 70.</code></pre>
 
-	<h3>Approach</h3>
-	<p>After analyzing the image provided in the example, I realized that there exist two options once we encounter a job: to do the job or not do the job. If we do the job, then we examine future jobs with start times greater than the current job's end time. If we do not take the job, then we move on to the next job by start time. Essentially, we must write a program that will determine which option - do the job or not do the job - will yield the highest profit.</p>
-	<p>Since we must go down two separate paths in order to compare the yields of the two options, I decided to take a recursive approach.<p>
+		<h3>Approach</h3>
+		<p>After analyzing the image provided in the example, I realized that there exist two options once we encounter a job: to do the job or not do the job. If we do the job, then we examine future jobs with start times greater than the current job's end time. If we do not take the job, then we move on to the next job by start time. Essentially, we must write a program that will determine which option - do the job or not do the job - will yield the highest profit.</p>
+		<p>Since we must go down two separate paths in order to compare the yields of the two options, I decided to take a recursive approach.<p>
 
-	<h3>My Solution</h3>
-	<pre><code>from functools import lru_cache
+		<h3>My Solution</h3>
+		<pre><code>from functools import lru_cache
 
 class Solution(object):
     def jobScheduling(self, startTime, endTime, profit):
@@ -55,32 +165,32 @@ class Solution(object):
             nextJobIdx = bisect_left(startTime, jobs[currJobIdx][END_TIME])
             
             return max(jobs[currJobIdx][PROFIT] + rec(nextJobIdx), rec(currJobIdx+1))
-        
+	        
         return rec(0)</pre></code>
-	
-	<h3>Explanation</h3>
-	<p>First, I created <code>jobs</code>: a list of tuples containing all the info about the jobs (sorted by start time). I also sorted <code>startTime</code> so that we can easily use binary search on it later on in the program.</p>
-	<pre><code>jobs = sorted(zip(startTime, endTime, profit))
+		
+		<h3>Explanation</h3>
+		<p>First, I created <code>jobs</code>: a list of tuples containing all the info about the jobs (sorted by start time). I also sorted <code>startTime</code> so that we can easily use binary search on it later on in the program.</p>
+		<pre><code>jobs = sorted(zip(startTime, endTime, profit))
 startTime.sort()</pre></code>
-	<p>Then I established some constant variables for general organization.</p>
-	<pre><code>N = len(jobs)
+		<p>Then I established some constant variables for general organization.</p>
+		<pre><code>N = len(jobs)
 START_TIME, END_TIME, PROFIT = 0, 1, 2</pre></code>
-	<p>Now, we are ready to create the recursive function. The function will take in an index of a job from the <code>jobs</code> list and determine which option yields the most profit: doing the job or not doing the job.</p>
-	<p>I used the lru_cache higher order function to enable memoization and reduce the execution time by ensuring no calculations are made more than once.</p>
-	<pre><code>@lru_cache(None)
+		<p>Now, we are ready to create the recursive function. The function will take in an index of a job from the <code>jobs</code> list and determine which option yields the most profit: doing the job or not doing the job.</p>
+		<p>I used the lru_cache higher order function to enable memoization and reduce the execution time by ensuring no calculations are made more than once.</p>
+		<pre><code>@lru_cache(None)
 def rec(currJobIdx):</pre></code>
-	<p>The only base case will be when the current job index is equal to the number of jobs, meaning no jobs remain and our job is done.</p>
-	<pre><code>	if currJobIdx == N: return 0</pre></code>
-	<p>As mentioned previously, I sorted <code>startTime</code> so that we can use binary search on it; Now is the time to do so. I decided to use binary search O(log n) because it is faster than iterating through the list O(n). I used <code>bisect_left</code> to find the index of the next job with a start time after the current job with a binary search.</p>
-	<pre><code>	nextJobIdx = bisect_left(startTime, jobs[currJobIdx][END_TIME])</pre></code>
-	<p>Now we return the path which yields the highest profit. If we do the job, the total profit equals the profit of the current job plus whatever is returned when we call the function on <code>nextJobIdx</code>. If we do not do the job, the total profit equals whatever is returned when we call the function on the next job in <code>jobs</code>.</p>
-	<pre><code>	return max(jobs[currJobIdx][PROFIT] + rec(nextJobIdx), rec(currJobIdx+1))</pre></code>
-	<p>We completed the recursive function. Now, all there is to do is call it on the index <code>0</code>.</p>
-	<pre><code>return rec(0)</pre></code>
+		<p>The only base case will be when the current job index is equal to the number of jobs, meaning no jobs remain and our job is done.</p>
+		<pre><code>	if currJobIdx == N: return 0</pre></code>
+		<p>As mentioned previously, I sorted <code>startTime</code> so that we can use binary search on it; Now is the time to do so. I decided to use binary search O(log n) because it is faster than iterating through the list O(n). I used <code>bisect_left</code> to find the index of the next job with a start time after the current job with a binary search.</p>
+		<pre><code>	nextJobIdx = bisect_left(startTime, jobs[currJobIdx][END_TIME])</pre></code>
+		<p>Now we return the path which yields the highest profit. If we do the job, the total profit equals the profit of the current job plus whatever is returned when we call the function on <code>nextJobIdx</code>. If we do not do the job, the total profit equals whatever is returned when we call the function on the next job in <code>jobs</code>.</p>
+		<pre><code>	return max(jobs[currJobIdx][PROFIT] + rec(nextJobIdx), rec(currJobIdx+1))</pre></code>
+		<p>We completed the recursive function. Now, all there is to do is call it on the index <code>0</code>.</p>
+		<pre><code>return rec(0)</pre></code>
 
-	<h3>Reflection</h3>
-	<p>A fun little recursive program. The leetcode website actually suggests a dynamic programming approach, but my solution completed faster than 95% of the solutions on the site. Maybe next time I encounter a problem like this I will try dynamic programming since I sometimes struggle understanding the concept and its application and would like to improve on it.</p>
-
+		<h3>Reflection</h3>
+		<p>A fun little recursive program. The leetcode website actually suggests a dynamic programming approach, but my solution completed faster than 95% of the solutions on the site. Maybe next time I encounter a problem like this I will try dynamic programming since I sometimes struggle understanding the concept and its application and would like to improve on it.</p>
+	</div>
 </main>
 <body>
 <html>
