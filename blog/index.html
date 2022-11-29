@@ -7,7 +7,7 @@
 </style>
 </head>
 
-<body>
+<body style = "max-width:  750px; margin: auto;">
 <header>
 <h1>Sean O'Mara</h1>
 <nav>
@@ -19,6 +19,75 @@
 </header>
 
 <main>
+	<div>
+		<h2>380. Insert Delete GetRandom O(1)</h2>
+		<p>November 29, 2022 - Daily Leetcode</p>
+		<p><a href="https://leetcode.com/problems/insert-delete-getrandom-o1/">Leetcode link</a></p>
+
+		<h3>Description</h3>
+		<p>Implement the <code>RandomizedSet</code> object.</p>
+		<ul>
+			<li><code>RandomizedSet()</code> initializes the <code>RandomizedSet</code> object.</li>
+			<li><code>bool insert(int val)</code> inserts an item <code>val</code> inot the set if not present. Returns <code>true</code> if the item was not present, <code>false</code> otherwise.</li>
+			<li><code>bool remove(int val)</code> removes an item <code>val</code> from the set if present. Returns <code>true</code> if the item was present, <code>false</code> otherwise.</li>
+			<li><code>int getRandom()</code> returns a random element from the curent set of elements (it's guaranteed that at least one element exists when this method is called). Each element must have the <b>same probability</b> of being returned.</li>
+		</ul>
+		<p>You must implement the functions of the class such that each function works in <b>average</b> <code>O(1)</code> time complexity.</p>
+
+		<h3>Example</h3>
+		<pre><code><b>Input</b>
+["RandomizedSet", "insert", "remove", "insert", "getRandom", "remove", "insert", "getRandom"]
+[[], [1], [2], [2], [], [1], [2], []]
+<b>Output</b>
+[null, true, false, true, 2, true, false, 2]
+
+<b>Explanation</b>
+RandomizedSet randomizedSet = new RandomizedSet();
+randomizedSet.insert(1); // Inserts 1 to the set. Returns true as 1 was inserted successfully.
+randomizedSet.remove(2); // Returns false as 2 does not exist in the set.
+randomizedSet.insert(2); // Inserts 2 to the set, returns true. Set now contains [1,2].
+randomizedSet.getRandom(); // getRandom() should return either 1 or 2 randomly.
+randomizedSet.remove(1); // Removes 1 from the set, returns true. Set now contains [2].
+randomizedSet.insert(2); // 2 was already in the set, so return false.
+randomizedSet.getRandom(); // Since 2 is the only number in the set, getRandom() will always return 2.</code></pre>
+
+		<h3>Approach</h3>
+		<p>I will create an array to hold all of the numbers in the set. However, checking to see if an element exists within in array works in <code>O(n)</code> time complexity and each function of the class must work in <code>O(1)</code> time complexity. To get around this problem, I will create a hashmap storing each item in the array as a key and the item's position in the array as the value.</p>
+
+		<h3>My Solution</h3>
+		<pre><code>class RandomizedSet:
+
+    def __init__(self):
+        self.nums, self.pos = [], {}
+
+    def insert(self, val: int) -> bool:
+        if val not in self.pos:
+            self.pos[val] = len(self.nums)
+            self.nums.append(val)
+            return True
+        else:
+            return False
+        
+
+    def remove(self, val: int) -> bool:
+        if val in self.pos:
+            idx = self.pos[val]
+            last = self.nums[-1]
+            
+            self.nums[idx], self.pos[last] = last, idx
+            
+            self.nums.pop()
+            self.pos.pop(val, 0)
+            
+            return True
+        else:
+            return False
+        
+
+    def getRandom(self) -> int:
+        return self.nums[random.randint(0, len(self.nums) - 1)]</code></pre>
+
+	</div>
 	<div>
 		<h2>2225. Find Players With Zero or One Losses</h2>
 		<p>November 28, 2022 - Daily Leetcode</p>
