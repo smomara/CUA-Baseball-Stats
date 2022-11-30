@@ -20,6 +20,41 @@
 
 <main>
 	<div>
+		<h2>1207. Unique Number of Occurences</h2>
+		<p>November 30, 2022 - Daily Leetcode</p>
+		<p><a href="https://leetcode.com/problems/unique-number-of-occurrences/">Leetcode link</a></p>
+
+		<h3>Description</h3>
+		<p>Given an array of integers <code>arr</code>, return <code>true</code> if the number of occurences of each value in the array is <b>unique</b>, or <code>false</code> otherwise.
+
+		<h3>Example</h3>
+		<pre><code><b>Input:</b> arr = [1,2,2,1,1,3]
+<b>Output:</b> true
+<b>Explanation:</b> The value 1 has 3 occurrences, 2 has 2 and 3 has 1. No two values have the same number of occurrences.</code></pre>
+
+		<h3>Approach</h3>
+		<p>It will be necessary to pass through the array twice - first to count the number of occurences and second to check if the number of occurences are unique. In the first pass, we will create a hashmap with the integers in <code>arr</code> as its keys, and the number of occurences as its value. In the second pass, we will add each occurence value to a set after verifying its uniqueness. If an occurence value is already in the set, then the number of occurences is not unique.</p>
+
+		<h3>My solution</h3>
+		<pre><code>class Solution:
+    def uniqueOccurrences(self, arr: List[int]) -> bool:
+        table = {}
+        
+        for k in arr:
+            table[k] = table.get(k, 0) + 1
+        
+        appearances = set()
+        
+        for k, v in table.items():
+            if v in appearances:
+                return False
+            else:
+                appearances.add(v)
+        
+        return True</code></pre>
+	</div>
+
+	<div>
 		<h2>380. Insert Delete GetRandom O(1)</h2>
 		<p>November 29, 2022 - Daily Leetcode</p>
 		<p><a href="https://leetcode.com/problems/insert-delete-getrandom-o1/">Leetcode link</a></p>
