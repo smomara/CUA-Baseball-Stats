@@ -24,9 +24,16 @@
       };
       xmlhttp.open("GET", "table.csv", true);
       xmlhttp.send();
+      
+      setInterval(function() {
+        xmlhttp.open("GET", "table.csv", true);
+        xmlhttp.send();
+      }, 5000); // check for updates every 5 seconds
+      
       function displayCSVData(csv) {
         var rows = csv.split("\n");
         var table = document.getElementById("csv-data").getElementsByTagName("tbody")[0];
+        table.innerHTML = ""; // clear existing rows
         for (var i = 0; i < rows.length; i++) {
           var cells = rows[i].split(",");
           if (cells.length > 1) {
