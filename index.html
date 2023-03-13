@@ -1,27 +1,58 @@
-<html lang = "en">
-<head>
-<title>Sean O'Mara</title>
-<meta charset = "utf-8">
-<style>
-	header {text-align:  center;}
-</style>
-</head>
-
-<body style = "max-width:  750px; margin: auto;">
-<header>
-<h1>Sean O'Mara</h1>
-<nav>
-<ul style = "list-style-type:none; margin: 0; padding: 0;">
-	<li><a href="./">Home</a></li>
-	<li><a href="./blog/">Blog</a></li>
-</ul>
-</nav>
-</header>
-
-<main>
-	<h2>Hi, I'm Sean!</h2>
-	<p>I am a student studying computer science and mathematical finance.</p>
-	<p>Exploring new ideas, coding, finance</p>
-</main>
-<body>
+<!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8">
+    <title>My CSV File</title>
+  </head>
+  <body>
+    <h1>My CSV File</h1>
+    <table id="csv-data">
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>Player</th>
+          <th>PA</th>
+          <th>HR</th>
+          <th>R</th>
+          <th>RBI</th>
+          <th>SB</th>
+          <th>BB%</th>
+          <th>K%</th>
+          <th>ISO</th>
+          <th>BABIP</th>
+          <th>AVG</th>
+          <th>OBP</th>
+          <th>SLG</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <script>
+      var csvData = "";
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          csvData = this.responseText;
+          displayCSVData(csvData);
+        }
+      };
+      xmlhttp.open("GET", "table.csv", true);
+      xmlhttp.send();
+      function displayCSVData(csv) {
+        var rows = csv.split("\n");
+        var table = document.getElementById("csv-data").getElementsByTagName("tbody")[0];
+        for (var i = 0; i < rows.length; i++) {
+          var cells = rows[i].split(",");
+          if (cells.length > 1) {
+            var row = table.insertRow(-1);
+            for (var j = 0; j < cells.length; j++) {
+              var cell = row.insertCell(-1);
+              cell.innerHTML = cells[j];
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
