@@ -7,44 +7,6 @@
   </head>
   <body>
     <h1>CUA Baseball Extended Hitting Statistics</h1>
-    <table id="csv-data">
-      <thead>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    <script>
-      var csvData = "";
-      var xmlhttp = new XMLHttpRequest();
-      xmlhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          csvData = this.responseText;
-          displayCSVData(csvData);
-        }
-      };
-      xmlhttp.open("GET", "table.csv", true);
-      xmlhttp.send();
-      
-      setInterval(function() {
-        xmlhttp.open("GET", "table.csv", true);
-        xmlhttp.send();
-      }, 5000); // check for updates every 5 seconds
-      
-      function displayCSVData(csv) {
-        var rows = csv.split("\n");
-        var table = document.getElementById("csv-data").getElementsByTagName("tbody")[0];
-        table.innerHTML = ""; // clear existing rows
-        for (var i = 0; i < rows.length; i++) {
-          var cells = rows[i].split(",");
-          if (cells.length > 1) {
-            var row = table.insertRow(-1);
-            for (var j = 0; j < cells.length; j++) {
-              var cell = row.insertCell(-1);
-              cell.innerHTML = cells[j];
-            }
-          }
-        }
-      }
-    </script>
+    <p><a href = "./2023/">2023</a> | <a href = "./2022/">2022</a></p>
   </body>
 </html>
