@@ -2,68 +2,66 @@ from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup as soup
 import pandas as pd
 
-# Parse the HTML
+# Scrape html
 url = "http://www.catholicathletics.com/sports/bsb/2022-23/teams/catholic?view=lineup&r=0&pos="
 response = Request(url, headers = {'User-Agent': 'Mozilla/5.0'})
 webpage = urlopen(response).read()
 page_soup = soup(webpage, "html.parser")
 
-
-# Create a 2D array containing all extended hitting statistics
-extended_master = []
+# Create 2D array containing extended hitting stats for each player
+extended = []
 table = page_soup.findAll("div", "stats-wrap clearfix")[1].findChild("table")
 for row in table.find_all("tr")[1:]:
     player = [cell.get_text(strip=True) for cell in row.find_all("td")]
     player[1] = " ".join(player[1].strip().split())
-    extended_master.append(player)
+    extended.append(player)
 
-extended_master = extended_master[:-2]
-
-for i in range(len(extended_master)):
-    for j in range(len(extended_master[i])):
+# Clean the array
+extended = extended[:-2]
+for i in range(len(extended)):
+    for j in range(len(extended[i])):
                 if j == 0 or j == 14 or j > 3 and j < 13:
-                    if extended_master[i][j] == "-":
-                        extended_master[i][j] = 0
+                    if extended[i][j] == "-":
+                        extended[i][j] = 0
                     else:
-                        extended_master[i][j] = int(extended_master[i][j])
+                        extended[i][j] = int(extended[i][j])
                 if j == 13:
-                    if extended_master[i][j] == "-":
-                        extended_master[i][j] = 0.0
+                    if extended[i][j] == "-":
+                        extended[i][j] = 0.0
                     else:
-                        extended_master[i][j] = float(extended_master[i][j])
+                        extended[i][j] = float(extended[i][j])
 
-# Create a 2D array containing all basic hitting statistics
-basic_master = []
+# Create 2D array containing all basic hitting stats for each player
+basic = []
 table = page_soup.find("td", "sort").find_parent("table")
 for row in table.find_all("tr")[1:]:
     player = [cell.get_text(strip=True) for cell in row.find_all("td")]
     player[1] = " ".join(player[1].strip().split())
-    basic_master.append(player)
+    basic.append(player)
 
-basic_master = basic_master[:-2]
-
-for i in range(len(basic_master)):
-    for j in range(len(basic_master[i])):
+# Clean the array
+basic = basic[:-2]
+for i in range(len(basic)):
+    for j in range(len(basic[i])):
         if j == 0 or j > 3 and j < 16:
-            if basic_master[i][j] == "-":
-                basic_master[i][j] = 0
+            if basic[i][j] == "-":
+                basic[i][j] = 0
             else:
-                basic_master[i][j] = int(basic_master[i][j])
+                basic[i][j] = int(basic[i][j])
         elif j >= 16:
-            basic_master[i][j] = float(basic_master[i][j])
+            basic[i][j] = float(basic[i][j])
 
-# Combine the basic and extended arrays into a master array
+# Combine both arrays
 table = {}
-for player in basic_master:
+for player in basic:
     table[player[0]] = player[1:]
-
-master = []
-for player in extended_master:
+individual_master = []
+for player in extended:
     key = player[0]
     if key in table:
-        master.append([key] + table[key] + player[4:])
+        individual_master.append([key] + table[key] + player[4:])
 
-# Constant variable representing a statistic corresponding to each field in each subarray
+# Constants for the fields in each subarray
 NUM = 0
 NAME = 1
 YR = 2
@@ -95,7 +93,7 @@ FO = 27
 GOFO = 28
 PA = 29
 
-# Functions to calculate extra statistics
+# Functions to calculate extra extended stats
 def calcBABIP(player):
     numerator = player[H] - player[HR]
     denominator = player[AB] - player[HR] - player[K] + player[SF]
@@ -120,11 +118,21 @@ def calcKrate(player):
     else:
         return f"{player[K]/player[PA] * 100:.1f}"
 
-# Create a pandas dataframe containing specific stats
-columns = ['No.', 'Player', 'PA', 'HR', 'R', 'RBI', 'SB', 'BB%', 'K%', 'ISO', 'BABIP', 'AVG', 'OBP', 'SLG']
+# wOBA weights from Tango
+def calcwOBA(player):
+    numerator = 0.72 * player[BB] + 0.75 * player[HBP] +  0.9 * (player[H] - player[DOUBLE] - player[TRIPLE] - player[HR]) + 1.24 * player[DOUBLE] + 1.56 * player[TRIPLE] + 1.95 * player[HR]
+    denominator = player[AB] + player[BB] + player[SF] + player[HBP]
+    
+    if denominator <= 0:
+        return "-"
+    else:
+        return f"{numerator/denominator:.3f}"
+
+# Create a dataframe with selected statistics
+columns = ['No.', 'Player', 'PA', 'HR', 'R', 'RBI', 'SB', 'BB%', 'K%', 'ISO', 'BABIP', 'AVG', 'OBP', 'SLG', 'wOBA']
 df = pd.DataFrame(columns=columns)
 
-for player in master:
+for player in individual_master:
     data = {
         'No.': player[NUM],
         'Player': player[NAME],
@@ -139,13 +147,19 @@ for player in master:
         'BABIP': calcBABIP(player),
         'AVG': f"{player[AVG]:.3f}",
         'OBP': f"{player[OBP]:.3f}",
-        'SLG': f"{player[SLG]:.3f}"
+        'SLG': f"{player[SLG]:.3f}",
+        'wOBA': f"{calcwOBA(player)}"
     }
 
     df = pd.concat([df, pd.DataFrame(data, index = [0])], ignore_index = True)
 
-# Save and export the dataframe as a csv
-csv_table = df.to_csv(index = False)
-with open('C:/Users/Max/Documents/smomara.github.io/table2022.csv', 'w') as f:
+# Export df as csv
+csv_table = df.to_csv(header = False, index = False)
+with open('C:/Users/Max/Documents/smomara.github.io/2023/table2023.csv', 'w') as f:
     f.write(csv_table)
+
+
+
+
+
 
