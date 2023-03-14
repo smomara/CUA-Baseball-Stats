@@ -64,26 +64,54 @@
       }
     </script>
     <script>
-      const table = document.querySelector('#csv-data');
-      const headers = table.querySelectorAll('th');
+          function sortTable(table, column, asc = true) {
+          const tbody = table.tBodies[0];
+          const rows = Array.from(tbody.querySelectorAll("tr"));
 
-      headers.forEach((header, index) => {
-        header.addEventListener('click', () => {
-          const rows = Array.from(table.querySelectorAll('tbody tr'));
-          const data = rows.map(row => {
-            const cell = row.querySelectorAll('td')[index];
-            return cell.textContent;
+          // Sort each row based on the cell value in the specified column
+          const sortedRows = rows.sort((a, b) => {
+          const cellA = a.querySelector(`td:nth-child(${column + 1})`).textContent;
+          const cellB = b.querySelector(`td:nth-child(${column + 1})`).textContent;
+          return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
           });
 
-          const isNumeric = !isNaN(data[0]);
-          const sorted = isNumeric ? data.sort((a, b) => a - b) : data.sort();
-      
-          rows.forEach((row, index) => {
-            const cell = row.querySelectorAll('td')[index];
-            cell.textContent = sorted[index];
+          // Remove existing rows and re-add them in the sorted order
+          while (tbody.firstChild) {
+          tbody.removeChild(tbody.firstChild);
+          }
+          tbody.append(...sortedRows);
+
+          // Update the table header to show the sorting direction
+          table.querySelectorAll("th").forEach(th => {
+          th.classList.remove("sorted-asc", "sorted-desc");
+          if (th.cellIndex === column) {
+          th.classList.add(asc ? "sorted-asc" : "sorted-desc");
+          }
           });
-        });
-      });
-    </script>
+          }
+
+          document.addEventListener("DOMContentLoaded", () => {
+          const table = document.getElementById("csv-data");
+
+          // Add click event listeners to each header cell
+          table.querySelectorAll("th").forEach((th, index) => {
+          th.addEventListener("click", () => {
+          const isAsc = th.classList.contains("sorted-asc");
+          sortTable(table, index, !isAsc);
+          });
+          });
+          });
+      </script>
+
+      <style>
+          /* Styling to show the sorting direction */
+          .sorted-asc::after {
+              content: " ▲";
+          }
+
+          .sorted-desc::after {
+              content: " ▼";
+          }
+      </style>
   </body>
 </html>
