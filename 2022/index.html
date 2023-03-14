@@ -42,11 +42,6 @@
       xmlhttp.open("GET", "table2022.csv", true);
       xmlhttp.send();
       
-      setInterval(function() {
-        xmlhttp.open("GET", "table2022.csv", true);
-        xmlhttp.send();
-      }, 5000); // check for updates every 5 seconds
-      
       function displayCSVData(csv) {
         var rows = csv.split("\n");
         var table = document.getElementById("csv-data").getElementsByTagName("tbody")[0];
