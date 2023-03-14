@@ -60,15 +60,27 @@
       </script>
       <script>
           function sortTable(table, column, asc = true) {
-          const tbody = table.tBodies[0];
-          const rows = Array.from(tbody.querySelectorAll("tr"));
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.querySelectorAll("tr"));
 
-          // Sort each row based on the cell value in the specified column
-          const sortedRows = rows.sort((a, b) => {
-          const cellA = a.querySelector(`td:nth-child(${column + 1})`).textContent;
-          const cellB = b.querySelector(`td:nth-child(${column + 1})`).textContent;
-          return asc ? cellA - cellB : cellB - cellA;
-          });
+            // Sort each row based on the cell value in the specified column
+            const sortedRows = rows.sort((a, b) => {
+              const cellA = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+              const cellB = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+
+              // Check if the cell values are numeric
+              const isNumeric = /^\d+(?:\.\d+)?%?$/.test(cellA) && /^\d+(?:\.\d+)?%?$/.test(cellB);
+
+              // Compare the cell values based on their data type
+              if (isNumeric) {
+                // Remove percent sign and convert to number
+                const numA = parseFloat(cellA.replace("%", ""));
+                const numB = parseFloat(cellB.replace("%", ""));
+                return asc ? numA - numB : numB - numA;
+              } else {
+                return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+              }
+            });
 
           // Remove existing rows and re-add them in the sorted order
           while (tbody.firstChild) {
