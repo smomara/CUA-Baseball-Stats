@@ -63,5 +63,27 @@
         }
       }
     </script>
+    <script>
+      const table = document.querySelector('#myTable');
+      const headers = table.querySelectorAll('th');
+
+      headers.forEach((header, index) => {
+        header.addEventListener('click', () => {
+          const rows = Array.from(table.querySelectorAll('tbody tr'));
+          const data = rows.map(row => {
+            const cell = row.querySelectorAll('td')[index];
+            return cell.textContent;
+          });
+
+          const isNumeric = !isNaN(data[0]);
+          const sorted = isNumeric ? data.sort((a, b) => a - b) : data.sort();
+      
+          rows.forEach((row, index) => {
+            const cell = row.querySelectorAll('td')[index];
+            cell.textContent = sorted[index];
+          });
+        });
+      });
+    </script>
   </body>
 </html>
