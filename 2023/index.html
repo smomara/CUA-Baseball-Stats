@@ -67,7 +67,7 @@
           const sortedRows = rows.sort((a, b) => {
           const cellA = a.querySelector(`td:nth-child(${column + 1})`).textContent;
           const cellB = b.querySelector(`td:nth-child(${column + 1})`).textContent;
-          return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+          return asc ? cellA - cellB : cellB - cellA;
           });
 
           // Remove existing rows and re-add them in the sorted order
@@ -97,7 +97,6 @@
           });
           });
       </script>
-
       <style>
           /* Styling to show the sorting direction */
           .sorted-asc::after {

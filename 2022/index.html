@@ -6,59 +6,59 @@
     <link rel = "stylesheet" href = "style.css">
   </head>
   <body>
-    <h1>CUA Baseball Extended Hitting Statistics</h1>
-    <p><a href = "../">Home</a> | <a href = "../2023/">2023</a> | <a href = "./"><u>2022</u></a></p>
-    <table id="csv-data">
-      <thead>
-        <tr>
-          <th>No.</th>
-          <th>Player</th>
-          <th>PA</th>
-          <th>HR</th>
-          <th>R</th>
-          <th>RBI</th>
-          <th>SB</th>
-          <th>BB%</th>
-          <th>K%</th>
-          <th>ISO</th>
-          <th>BABIP</th>
-          <th>AVG</th>
-          <th>OBP</th>
-          <th>SLG</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    <script>
-      var csvData = "";
-      var xmlhttp = new XMLHttpRequest();
-      xmlhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
+      <h1>CUA Baseball Extended Hitting Statistics</h1>
+      <p><a href="../">Home</a> | <a href="../2023/">2023</a> | <a href="./"><u>2022</u></a></p>
+      <table id="csv-data">
+          <thead>
+              <tr>
+                  <th>No.</th>
+                  <th>Player</th>
+                  <th>PA</th>
+                  <th>HR</th>
+                  <th>R</th>
+                  <th>RBI</th>
+                  <th>SB</th>
+                  <th>BB%</th>
+                  <th>K%</th>
+                  <th>ISO</th>
+                  <th>BABIP</th>
+                  <th>AVG</th>
+                  <th>OBP</th>
+                  <th>SLG</th>
+              </tr>
+          </thead>
+          <tbody>
+          </tbody>
+      </table>
+      <script>
+          var csvData = "";
+          var xmlhttp = new XMLHttpRequest();
+          xmlhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
           csvData = this.responseText;
           displayCSVData(csvData);
-        }
-      };
-      xmlhttp.open("GET", "table2022.csv", true);
-      xmlhttp.send();
-      
-      function displayCSVData(csv) {
-        var rows = csv.split("\n");
-        var table = document.getElementById("csv-data").getElementsByTagName("tbody")[0];
-        table.innerHTML = ""; // clear existing rows
-        for (var i = 0; i < rows.length; i++) {
+          }
+          };
+          xmlhttp.open("GET", "table2022.csv", true);
+          xmlhttp.send();
+
+          function displayCSVData(csv) {
+          var rows = csv.split("\n");
+          var table = document.getElementById("csv-data").getElementsByTagName("tbody")[0];
+          table.innerHTML = ""; // clear existing rows
+          for (var i = 0; i < rows.length; i++) {
           var cells = rows[i].split(",");
           if (cells.length > 1) {
-            var row = table.insertRow(-1);
-            for (var j = 0; j < cells.length; j++) {
-              var cell = row.insertCell(-1);
-              cell.innerHTML = cells[j];
-            }
+          var row = table.insertRow(-1);
+          for (var j = 0; j < cells.length; j++) {
+          var cell = row.insertCell(-1);
+          cell.innerHTML = cells[j];
           }
-        }
-      }
-    </script>
-    <script>
+          }
+          }
+          }
+      </script>
+      <script>
           function sortTable(table, column, asc = true) {
           const tbody = table.tBodies[0];
           const rows = Array.from(tbody.querySelectorAll("tr"));
@@ -67,7 +67,7 @@
           const sortedRows = rows.sort((a, b) => {
           const cellA = a.querySelector(`td:nth-child(${column + 1})`).textContent;
           const cellB = b.querySelector(`td:nth-child(${column + 1})`).textContent;
-          return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+          return asc ? cellA - cellB : cellB - cellA;
           });
 
           // Remove existing rows and re-add them in the sorted order
@@ -97,7 +97,6 @@
           });
           });
       </script>
-
       <style>
           /* Styling to show the sorting direction */
           .sorted-asc::after {
