@@ -66,7 +66,7 @@ def generateTeamStats(url):
     page_soup = soup(webpage, "html.parser")
     
     batting = []
-    table = page_soup.find("th", text = "AVG").find_parent("table")
+    table = page_soup.find("th", string = "AVG").find_parent("table")
     for row in table.find_all("tr")[1:]:
         batting.append([cell.get_text(strip=True) for cell in row.find_all("td")])
     for i, row in enumerate(table.find_all("tr")[1:]):
@@ -80,7 +80,7 @@ def generateTeamStats(url):
                 batting[i][j] = int(batting[i][j])
                 
     pitching = []
-    table = page_soup.find("th", text = "ERA").find_parent("table")
+    table = page_soup.find("th", string = "ERA").find_parent("table")
     for row in table.find_all("tr")[1:]:
         pitching.append([cell.get_text(strip=True) for cell in row.find_all("td")])
     for i, row in enumerate(table.find_all("tr")[1:]):
