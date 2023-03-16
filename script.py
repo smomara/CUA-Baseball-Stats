@@ -200,13 +200,14 @@ def calcwRCPlus(player):
     return float(f"{(((calcwRAA(player) / player[PA] + league_R / league_PA) + (league_R / league_PA - BPF * league_R / league_PA)) / (league_R / league_PA) * 100):.1f}")
 
 def generateDataFrame(individual_master):
-    columns = ['No.', 'Player', 'PA', 'HR', 'R', 'RBI', 'SB', 'BB%', 'K%', 'ISO', 'BABIP', 'AVG', 'OBP', 'SLG', 'wOBA', 'wRC+']
+    columns = ['No.', 'Player', 'G', 'PA', 'HR', 'R', 'RBI', 'SB', 'BB%', 'K%', 'ISO', 'BABIP', 'AVG', 'OBP', 'SLG', 'wOBA', 'wRC+']
     df = pd.DataFrame(columns=columns)
 
     for player in individual_master:
         data = {
             'No.': player[NUM],
             'Player': player[NAME],
+            'G': player[G],
             'PA': player[PA],
             'HR': player[HR],
             'R': player[R],
