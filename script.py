@@ -237,7 +237,7 @@ team_stats = generateTeamStats("https://landmarkconference.org/stats.aspx?path=b
 league_AB, league_R, league_H, league_DOUBLE, league_TRIPLE, league_HR, league_BB, league_HBP, league_SF, league_PA, league_wOBA = calcLeagueStats(team_stats)
 exportCSV(generateDataFrame(individual_stats), 'C:\\Users\\Max\\Documents\\smomara.github.io\\2023\\table2023.csv')
 
-individual_stats = generateIndividualStats("http://www.catholicathletics.com/sports/bsb/2021-22/teams/catholic?view=lineup&r=0&pos=")
-team_stats = generateTeamStats("https://landmarkconference.org/stats.aspx?path=baseball&year=2022")
-league_AB, league_R, league_H, league_DOUBLE, league_TRIPLE, league_HR, league_BB, league_HBP, league_SF, league_PA, league_wOBA = calcLeagueStats(team_stats)
-exportCSV(generateDataFrame(individual_stats), 'C:\\Users\\Max\\Documents\\smomara.github.io\\2022\\table2022.csv')
+# individual_stats = generateIndividualStats("http://www.catholicathletics.com/sports/bsb/2021-22/teams/catholic?view=lineup&r=0&pos=")
+# team_stats = generateTeamStats("https://landmarkconference.org/stats.aspx?path=baseball&year=2022")
+# league_AB, league_R, league_H, league_DOUBLE, league_TRIPLE, league_HR, league_BB, league_HBP, league_SF, league_PA, league_wOBA = calcLeagueStats(team_stats)
+# exportCSV(generateDataFrame(individual_stats), 'C:\\Users\\Max\\Documents\\smomara.github.io\\2022\\table2022.csv')
