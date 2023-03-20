@@ -2,7 +2,7 @@ from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup as soup
 import pandas as pd
 
-BPF = 1.05347996049
+BPF = 1.05
 
 def generateIndividualStats(url):
     response = Request(url, headers = {'User-Agent': 'Mozilla/5.0'})
