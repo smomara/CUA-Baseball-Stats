@@ -110,11 +110,19 @@ def generateTeamStats(url):
 def calcLeagueStats(team_master):
     total = []
     for j in range(len(team_master[0])):
-        if j in set([3, 4, 5, 6, 7, 8, 12, 13, 17]):
+        if j in set([3, 4, 5, 6, 7, 8, 12, 13, 17, 29]):
             count = 0
             for i in range(len(team_master)):
                 count += team_master[i][j]
             total.append(count)
+        elif j == 19:
+            SB_count = 0
+            CS_count = 0
+            for i in range(len(team_master)):
+                SB_count += int(team_master[i][j].strip().split("-")[0])
+                CS_count += int(team_master[i][j].strip().split("-")[1]) - int(team_master[i][j].strip().split("-")[0])
+            total.append(SB_count)
+            total.append(CS_count)
     
     league_AB = total[0]
     league_R = total[1]
@@ -122,13 +130,19 @@ def calcLeagueStats(team_master):
     league_DOUBLE = total[3]
     league_TRIPLE = total[4]
     league_HR = total[5]
+    league_SINGLE = league_H - league_DOUBLE - league_TRIPLE - league_HR
     league_BB = total[6]
     league_HBP = total[7]
     league_SF = total[8]
+    league_SB = total[9]
+    league_CS = total[10]
+    league_IP = int(total[11])
     league_PA = league_AB + league_BB + league_SF + league_HBP
-    league_wOBA = float(f"{(0.72 * league_BB + 0.75 * league_HBP +  0.9 * (league_H - league_DOUBLE - league_TRIPLE - league_HR) + 1.24 * league_DOUBLE + 1.56 * league_TRIPLE + 1.95 * league_HR) / league_PA}")
+    league_runCS = -1 * (2 * league_R / league_IP * 3 + 0.075)
+    league_wSB = (league_SB * 0.2 + league_CS * league_runCS) / (league_SINGLE + league_BB + league_HBP)
+    league_wOBA = float(f"{(0.72 * league_BB + 0.75 * league_HBP +  0.9 * league_SINGLE + 1.24 * league_DOUBLE + 1.56 * league_TRIPLE + 1.95 * league_HR) / league_PA}")
     
-    return league_AB, league_R, league_H, league_DOUBLE, league_TRIPLE, league_HR, league_BB, league_HBP, league_SF, league_PA, league_wOBA
+    return league_AB, league_R, league_H, league_DOUBLE, league_TRIPLE, league_HR, league_SINGLE, league_BB, league_HBP, league_SF, league_SB, league_CS, league_IP, league_PA, league_runCS, league_wSB, league_wOBA
 
 NUM = 0
 NAME = 1
@@ -161,6 +175,9 @@ FO = 27
 GOFO = 28
 PA = 29
 
+def calcSINGLE(player):
+    return player[H] - player[DOUBLE] - player[TRIPLE] - player[HR]
+
 def calcBABIP(player):
     numerator = player[H] - player[HR]
     denominator = player[AB] - player[HR] - player[K] + player[SF]
@@ -186,7 +203,7 @@ def calcKrate(player):
         return f"{player[K]/player[PA] * 100:.1f}"
 
 def calcwOBA(player):
-    numerator = 0.72 * player[BB] + 0.75 * player[HBP] +  0.9 * (player[H] - player[DOUBLE] - player[TRIPLE] - player[HR]) + 1.24 * player[DOUBLE] + 1.56 * player[TRIPLE] + 1.95 * player[HR]
+    numerator = 0.72 * player[BB] + 0.75 * player[HBP] +  0.9 * calcSINGLE(player) + 1.24 * player[DOUBLE] + 1.56 * player[TRIPLE] + 1.95 * player[HR]
     denominator = player[AB] + player[BB] + player[SF] + player[HBP]
     return float(f"{numerator/denominator:.3f}")
 
@@ -199,8 +216,14 @@ def calcwRC(player):
 def calcwRCPlus(player):
     return float(f"{(((calcwRAA(player) / player[PA] + league_R / league_PA) + (league_R / league_PA - BPF * league_R / league_PA)) / (league_R / league_PA) * 100):.1f}")
 
+def calcwSB(player):
+    return player[SB] * 0.2 + player[CS] * league_runCS - league_wSB * (calcSINGLE(player) + player[BB] + player[HBP])
+
+def calcBattingRunsAboveAverage(player):
+    return calcwRAA(player) + (league_R / league_PA - (BPF * league_R / league_PA)) * player[PA] + (league_R / league_PA - (league_R / league_PA)) * player[PA]
+
 def generateDataFrame(individual_master):
-    columns = ['Player', 'G', 'PA', 'HR', 'R', 'RBI', 'SB', 'BB%', 'K%', 'ISO', 'BABIP', 'AVG', 'OBP', 'SLG', 'wOBA', 'wRC+']
+    columns = ['Player', 'G', 'PA', 'HR', 'R', 'RBI', 'SB', 'BB%', 'K%', 'ISO', 'BABIP', 'AVG', 'OBP', 'SLG', 'wOBA', 'wRC+', 'wSB', 'Off']
     df = pd.DataFrame(columns=columns)
 
     for player in individual_master:
@@ -220,7 +243,9 @@ def generateDataFrame(individual_master):
             'OBP': f"{player[OBP]:.3f}",
             'SLG': f"{player[SLG]:.3f}",
             'wOBA': f"{calcwOBA(player):.3f}",
-            'wRC+': calcwRCPlus(player)
+            'wRC+': calcwRCPlus(player),
+            'wSB': f"{calcwSB(player):.1f}",
+            'Off': f"{calcwSB(player) + calcBattingRunsAboveAverage(player):.1f}"
         }
 
         df = pd.concat([df, pd.DataFrame(data, index = [0])], ignore_index = True)
@@ -234,10 +259,10 @@ def exportCSV(df, filepath):
 
 individual_stats = generateIndividualStats("http://www.catholicathletics.com/sports/bsb/2022-23/teams/catholic?view=lineup&r=0&pos=")
 team_stats = generateTeamStats("https://landmarkconference.org/stats.aspx?path=baseball&year=2023")
-league_AB, league_R, league_H, league_DOUBLE, league_TRIPLE, league_HR, league_BB, league_HBP, league_SF, league_PA, league_wOBA = calcLeagueStats(team_stats)
+league_AB, league_R, league_H, league_DOUBLE, league_TRIPLE, league_HR, league_SINGLE, league_BB, league_HBP, league_SF, league_PA, league_wSB, league_wOBA = calcLeagueStats(team_stats)
 exportCSV(generateDataFrame(individual_stats), 'C:\\Users\\Max\\Documents\\smomara.github.io\\2023\\table2023.csv')
 
-# individual_stats = generateIndividualStats("http://www.catholicathletics.com/sports/bsb/2021-22/teams/catholic?view=lineup&r=0&pos=")
-# team_stats = generateTeamStats("https://landmarkconference.org/stats.aspx?path=baseball&year=2022")
-# league_AB, league_R, league_H, league_DOUBLE, league_TRIPLE, league_HR, league_BB, league_HBP, league_SF, league_PA, league_wOBA = calcLeagueStats(team_stats)
-# exportCSV(generateDataFrame(individual_stats), 'C:\\Users\\Max\\Documents\\smomara.github.io\\2022\\table2022.csv')
+individual_stats = generateIndividualStats("http://www.catholicathletics.com/sports/bsb/2021-22/teams/catholic?view=lineup&r=0&pos=")
+team_stats = generateTeamStats("https://landmarkconference.org/stats.aspx?path=baseball&year=2022")
+league_AB, league_R, league_H, league_DOUBLE, league_TRIPLE, league_HR, league_SINGLE, league_BB, league_HBP, league_SF, league_PA, league_wSB, league_wOBA = calcLeagueStats(team_stats)
+exportCSV(generateDataFrame(individual_stats), 'C:\\Users\\Max\\Documents\\smomara.github.io\\2022\\table2022.csv')
