@@ -217,7 +217,7 @@ def calcwRCPlus(player):
     return float(f"{(((calcwRAA(player) / player[PA] + league_R / league_PA) + (league_R / league_PA - BPF * league_R / league_PA)) / (league_R / league_PA) * 100):.1f}")
 
 def calcwSB(player):
-    return player[SB] * 0.2 + player[CS] * league_runCS - league_wSB * (calcSINGLE(player) + player[BB] + player[HBP])
+    return sfloat(f"{player[SB] * 0.2 + player[CS] * league_runCS - league_wSB * (calcSINGLE(player) + player[BB] + player[HBP]):.1f}")
 
 def calcBattingRunsAboveAverage(player):
     return calcwRAA(player) + (league_R / league_PA - (BPF * league_R / league_PA)) * player[PA] + (league_R / league_PA - (league_R / league_PA)) * player[PA]
