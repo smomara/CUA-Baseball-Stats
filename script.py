@@ -138,7 +138,7 @@ def calcLeagueStats(team_master):
     league_CS = total[10]
     league_IP = int(total[11])
     league_PA = league_AB + league_BB + league_SF + league_HBP
-    league_runCS = -1 * (2 * league_R / league_IP * 3 + 0.075)
+    league_runCS = -1 * (2 * league_R / (league_IP * 3) + 0.075)
     league_wSB = (league_SB * 0.2 + league_CS * league_runCS) / (league_SINGLE + league_BB + league_HBP)
     league_wOBA = float(f"{(0.72 * league_BB + 0.75 * league_HBP +  0.9 * league_SINGLE + 1.24 * league_DOUBLE + 1.56 * league_TRIPLE + 1.95 * league_HR) / league_PA}")
     
