@@ -1,4 +1,9 @@
-fetch("https://www.d3baseball.com/seasons/2023/schedule/")
+fetch("https://www.d3baseball.com/seasons/2023/schedule/", {
+    mode: "cors",
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    }
+  })
   .then(response => response.text())
   .then(html => {
     const parser = new DOMParser();
