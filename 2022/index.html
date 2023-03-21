@@ -73,7 +73,7 @@
               const cellB = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
 
               // Check if the cell values are numeric
-              const isNumeric = /^\d+(?:\.\d+)?%?$/.test(cellA) && /^\d+(?:\.\d+)?%?$/.test(cellB);
+              const isNumeric = /^-?\d+(?:\.\d+)?%?$/.test(cellA) && /^-?\d+(?:\.\d+)?%?$/.test(cellB);
 
               // Compare the cell values based on their data type
               if (isNumeric) {
