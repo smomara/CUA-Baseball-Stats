@@ -263,9 +263,9 @@ def exportCSV(df, filepath):
 individual_stats = generateIndividualStats("http://www.catholicathletics.com/sports/bsb/2022-23/teams/catholic?view=lineup&r=0&pos=")
 team_stats = generateTeamStats("https://landmarkconference.org/stats.aspx?path=baseball&year=2023")
 league_AB, league_R, league_H, league_DOUBLE, league_TRIPLE, league_HR, league_SINGLE, league_BB, league_HBP, league_SF, league_CS, league_SB, league_IP, league_PA, league_runCS, league_wSB, league_wOBA = calcLeagueStats(team_stats)
-exportCSV(generateDataFrame(individual_stats), 'C:\\Users\\Max\\Documents\\smomara.github.io\\2023\\table2023.csv')
+exportCSV(generateDataFrame(individual_stats), 'C:\\Users\\Max\\Documents\\smomara.github.io\\team\\cua\\2023\\table2023.csv')
 
 individual_stats = generateIndividualStats("http://www.catholicathletics.com/sports/bsb/2021-22/teams/catholic?view=lineup&r=0&pos=")
 team_stats = generateTeamStats("https://landmarkconference.org/stats.aspx?path=baseball&year=2022")
 league_AB, league_R, league_H, league_DOUBLE, league_TRIPLE, league_HR, league_SINGLE, league_BB, league_HBP, league_SF, league_CS, league_SB, league_IP, league_PA, league_runCS, league_wSB, league_wOBA = calcLeagueStats(team_stats)
-exportCSV(generateDataFrame(individual_stats), 'C:\\Users\\Max\\Documents\\smomara.github.io\\2022\\table2022.csv')
+exportCSV(generateDataFrame(individual_stats), 'C:\\Users\\Max\\Documents\\smomara.github.io\\team\\cua\\2022\\table2022.csv')
