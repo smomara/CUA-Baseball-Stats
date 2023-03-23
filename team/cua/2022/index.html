@@ -7,7 +7,7 @@
   </head>
   <body>
       <h1>CUA Baseball Extended Hitting Statistics</h1>
-      <p class = "menu"><a href="../">Home</a> | <a href="./"><u>2023</u></a> | <a href="../2022/">2022</a></p>
+      <p class = "menu"><a href="../../../">Home</a> | <a href="../2023/">2023</a> | <a href="./"><u>2022</u></a></p>
       <table id="csv-data">
           <thead>
               <tr>
@@ -43,7 +43,7 @@
           displayCSVData(csvData);
           }
           };
-          xmlhttp.open("GET", "table2023.csv", true);
+          xmlhttp.open("GET", "table2022.csv", true);
           xmlhttp.send();
 
           function displayCSVData(csv) {
@@ -88,7 +88,7 @@
 
           // Remove existing rows and re-add them in the sorted order
           while (tbody.firstChild) {
-            tbody.removeChild(tbody.firstChild);
+          tbody.removeChild(tbody.firstChild);
           }
           tbody.append(...sortedRows);
 
